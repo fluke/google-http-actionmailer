@@ -1,15 +1,13 @@
 # GoogleHttpActionmailer
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/google_http_actionmailer`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+An ActionMailer adapter to send email using Google's HTTPS Web API (instead of SMTP).
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'google_http_actionmailer'
+gem 'google-http-actionmailer'
 ```
 
 And then execute:
@@ -18,11 +16,43 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install google_http_actionmailer
+    $ gem install google-http-actionmailer
 
 ## Usage
 
-TODO: Write usage instructions here
+Set up your `authorization` as described in the [Google API Client](https://github.com/google/google-api-ruby-client/#authorization) (the easiest method is to pass a valid access token), edit `config/application.rb` or `config/environments/$ENVIRONMENT.rb` and add/change the following to the ActionMailer configuration:
+
+```ruby
+config.action_mailer.delivery_method = :google_http_actionmailer
+config.action_mailer.google_http_actionmailer_settings = {
+  authorization: ...,
+  client_options: {
+    application_name: ...,
+    application_version: ...,
+  },
+  request_options: {
+    retries: ...,
+    header: ...,
+  },
+  message_options: {
+    fields: ...,
+    content_type: ...,
+  }
+}
+```
+
+For client and request options, you can look [here](https://github.com/google/google-api-ruby-client/blob/master/lib/google/apis/options.rb). And for message options, you can look at the `send_user_message` method [here](https://github.com/google/google-api-ruby-client/blob/master/generated/google/apis/gmail_v1/service.rb#L1150).
+
+For dynamic setting of delivery method (this may be required given the access tokens usually expire):
+
+```ruby
+mail.delivery_method(
+  GoogleHttpActionmailer::DeliveryMethod, {
+  authorization: ...
+})
+```
+
+Normal ActionMailer usage will now transparently be sent using Google's HTTPS API.
 
 ## Development
 
