@@ -39,7 +39,7 @@ module GoogleHttpActionmailer
 
       before_send = delivery_options[:before_send]
       if before_send && before_send.respond_to?(:call)
-        before_send.call(message)
+        before_send.call(mail, message)
       end
 
       message = service.send_user_message(
@@ -50,7 +50,7 @@ module GoogleHttpActionmailer
 
       after_send = delivery_options[:after_send]
       if after_send && after_send.respond_to?(:call)
-        after_send.call(message)
+        after_send.call(mail, message)
       end
     end
   end
