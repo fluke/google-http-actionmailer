@@ -9,6 +9,7 @@ module GoogleHttpActionmailer
   class DeliveryMethod
     attr_reader :service
     attr_reader :message_options
+    attr_reader :delivery_options
 
     def initialize(params)
       @service = Google::Apis::GmailV1::GmailService.new
@@ -26,6 +27,7 @@ module GoogleHttpActionmailer
       end
 
       @message_options = params[:message_options] || {}
+      @delivery_options = params[:delivery_options] || {}
     end
 
     def deliver!(mail)
@@ -35,7 +37,21 @@ module GoogleHttpActionmailer
         thread_id: mail['Thread-ID']
       )
 
-      service.send_user_message(user_id, message, message_options)
+      before_send = delivery_options[:before_send]
+      if before_send && before_send.respond_to?(:call)
+        before_send.call(message)
+      end
+
+      message = service.send_user_message(
+        user_id,
+        message,
+        message_options
+      )
+
+      after_send = delivery_options[:after_send]
+      if after_send && after_send.respond_to?(:call)
+        after_send.call(message)
+      end
     end
   end
 end
