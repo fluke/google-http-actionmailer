@@ -2,6 +2,8 @@
 
 An ActionMailer adapter to send email using Google's HTTPS Web API (instead of SMTP).
 
+https://travis-ci.org/kartikluke/google-http-actionmailer.svg?branch=master
+
 ## Installation
 
 Add this line to your application's Gemfile:
