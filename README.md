@@ -69,6 +69,26 @@ mail.delivery_method(
 
 Normal ActionMailer usage will now transparently be sent using Google's HTTPS API.
 
+To use the delivery options pass a proc that takes two parameters mail (the object created by ActionMailer) and message (the object created by the Gmail API).
+
+```ruby
+GoogleHttpActionmailer::DeliveryMethod, {
+  authorization: access_token,
+  client_options: {
+    application_name: ...,
+    application_version: ...,
+  },
+  delivery_options: {
+    after_send: ->(mail, message) {
+      StorePostSendDetails.call(user: self, mail: mail, message: message)
+    },
+    before_send: ->(mail, message) {
+      StorePreSendDetails.call(user: self, mail: mail, message: message)
+    }
+  }
+}
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
