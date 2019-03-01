@@ -24,6 +24,7 @@ Set up your `authorization` as described in the [Google API Client](https://gith
 
 ```ruby
 config.action_mailer.delivery_method = :google_http_actionmailer
+
 config.action_mailer.google_http_actionmailer_settings = {
   authorization: ...,
   client_options: {
@@ -37,9 +38,23 @@ config.action_mailer.google_http_actionmailer_settings = {
   message_options: {
     fields: ...,
     content_type: ...,
+  },
+  delivery_options: {
+    before_send: ...,
+    after_send: ...,
   }
 }
 ```
+
+### Options
+
+| option | details |
+| ------ | ------- |
+| authorization | This is the authorization, it could be a access token, etc as described in the [Google API Client](https://github.com/google/google-api-ruby-client/#authorization) |
+| client_options | General client options as described in the [Google API Client options code](https://github.com/googleapis/google-api-ruby-client/blob/0.26.0/lib/google/apis/options.rb#L38). |
+| request_options | General request options as described in the [Google API Client options code](https://github.com/googleapis/google-api-ruby-client/blob/0.26.0/lib/google/apis/options.rb#L62). |
+| message_options | [Specific options](https://github.com/googleapis/google-api-ruby-client/blob/0.26.0/generated/google/apis/gmail_v1/service.rb#L1075) for that message such as fields, content_type, upload_source and quota_user. |
+| delivery_options | This currently contains hooks for before the message is sent and after the message is sent. |
 
 For client and request options, you can look [here](https://github.com/google/google-api-ruby-client/blob/master/lib/google/apis/options.rb). And for message options, you can look at the `send_user_message` method [here](https://github.com/google/google-api-ruby-client/blob/master/generated/google/apis/gmail_v1/service.rb#L1150).
 
@@ -53,6 +68,26 @@ mail.delivery_method(
 ```
 
 Normal ActionMailer usage will now transparently be sent using Google's HTTPS API.
+
+To use the delivery options pass a proc that takes two parameters mail (the object created by ActionMailer) and message (the object created by the Gmail API).
+
+```ruby
+GoogleHttpActionmailer::DeliveryMethod, {
+  authorization: access_token,
+  client_options: {
+    application_name: ...,
+    application_version: ...,
+  },
+  delivery_options: {
+    after_send: ->(mail, message) {
+      StorePostSendDetails.call(user: self, mail: mail, message: message)
+    },
+    before_send: ->(mail, message) {
+      StorePreSendDetails.call(user: self, mail: mail, message: message)
+    }
+  }
+}
+```
 
 If you want to set the threadId to you outgoing mail just add the header 'Thread-ID' with the appropriate value.
 
