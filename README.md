@@ -54,6 +54,8 @@ mail.delivery_method(
 
 Normal ActionMailer usage will now transparently be sent using Google's HTTPS API.
 
+If you want to set the threadId to you outgoing mail just add the header 'Thread-ID' with the appropriate value.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

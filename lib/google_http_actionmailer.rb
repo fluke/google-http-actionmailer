@@ -34,7 +34,7 @@ module GoogleHttpActionmailer
       user_id = message_options[:user_id] || 'me'
       message = Google::Apis::GmailV1::Message.new(
         raw:       mail.to_s,
-        thread_id: mail['Thread-ID']
+        thread_id: mail['Thread-ID'].to_s
       )
 
       before_send = delivery_options[:before_send]
