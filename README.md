@@ -89,7 +89,11 @@ GoogleHttpActionmailer::DeliveryMethod, {
 }
 ```
 
-If you want to set the threadId to you outgoing mail just add the header 'Thread-ID' with the appropriate value.
+If you want to set the threadId to your outgoing mail, just add the header 'Thread-ID' with the appropriate value.
+
+```ruby
+mail to: email, subject: subject, "Thread-ID": thread_id
+```
 
 ## Development
 
