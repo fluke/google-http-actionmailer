@@ -32,10 +32,20 @@ module GoogleHttpActionmailer
 
     def deliver!(mail)
       user_id = message_options[:user_id] || 'me'
-      message = Google::Apis::GmailV1::Message.new(
-        raw:       mail.to_s,
-        thread_id: mail['Thread-ID'].to_s
-      )
+
+      message = nil
+      if mail.attachments.empty?
+        message = Google::Apis::GmailV1::Message.new(
+          raw:       mail.to_s,
+          thread_id: mail['Thread-ID'].to_s
+        )
+      else
+        message = Google::Apis::GmailV1::Message.new(
+          thread_id: mail['Thread-ID'].to_s
+        )
+        message_options[:upload_source] = StringIO.new(mail.to_s)
+        message_options[:content_type] = 'message/rfc822'
+      end
 
       before_send = delivery_options[:before_send]
       if before_send && before_send.respond_to?(:call)
