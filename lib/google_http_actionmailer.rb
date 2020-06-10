@@ -32,6 +32,11 @@ module GoogleHttpActionmailer
 
     def deliver!(mail)
       user_id = message_options[:user_id] || 'me'
+
+      # Make sure the bcc is included in the headers so any bcc addresses
+      # also get sent
+      mail[:bcc].include_in_headers = true
+
       message = Google::Apis::GmailV1::Message.new(
         raw:       mail.to_s,
         thread_id: mail['Thread-ID'].to_s
