@@ -35,7 +35,7 @@ module GoogleHttpActionmailer
 
       # Make sure the bcc is included in the headers so any bcc addresses
       # also get sent
-      mail[:bcc].include_in_headers = true
+      mail[:bcc].include_in_headers = true if mail[:bcc]
 
       message = Google::Apis::GmailV1::Message.new(
         raw:       mail.to_s,
